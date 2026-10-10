@@ -107,6 +107,55 @@ export function ViewerCellView({
           />
         )}
       </div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-center gap-1 bg-gradient-to-b from-black/90 via-black/55 to-transparent p-1.5">
+        <button
+          type="button"
+          draggable
+          onDragStart={onDragStart}
+          className="pointer-events-auto cursor-grab rounded p-1 text-white/70 hover:bg-white/10 hover:text-white active:cursor-grabbing"
+          aria-label="Drag to reorder"
+        >
+          <GripVertical className="size-3.5" />
+        </button>
+        <input
+          value={cell.label}
+          onChange={(e) => onLabelChange(e.target.value)}
+          placeholder="Label"
+          className="pointer-events-auto min-w-0 flex-1 bg-transparent text-xs font-medium text-white outline-none placeholder:text-white/40"
+        />
+        {cell.source && (
+          <>
+            <Button
+              type="button"
+              size="sm"
+              variant={listening ? "default" : "secondary"}
+              className={cn(
+                "pointer-events-auto h-7 gap-1 px-2 text-xs",
+                listening && "bg-teal-500 text-zinc-950 hover:bg-teal-400",
+              )}
+              onClick={onListen}
+            >
+              {listening ? (
+                <Volume2 className="size-3.5" />
+              ) : (
+                <VolumeX className="size-3.5" />
+              )}
+              Listen
+            </Button>
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="ghost"
+              className="pointer-events-auto text-white/80 hover:bg-white/10 hover:text-white"
+              onClick={onClear}
+              aria-label="Remove"
+            >
+              <X className="size-3.5" />
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
