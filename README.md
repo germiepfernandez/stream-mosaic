@@ -108,3 +108,24 @@ This repo uses [OpenSpec](https://openspec.dev/) for change proposals and specs 
 - `/opsx-archive` — archive when done
 
 Restart Cursor after pulling so the new commands load.
+
+## Graphify
+
+This repo uses [graphify](https://github.com/safishamsi/graphify) for a local codebase knowledge graph (`graphify-out/`). Cursor rule: [`.cursor/rules/graphify.mdc`](.cursor/rules/graphify.mdc).
+
+Install the CLI (once per machine):
+
+```bash
+pip install graphifyy
+# or: pipx install graphifyy
+graphify cursor install   # writes .cursor/rules/graphify.mdc
+graphify update .         # rebuild AST graph (no API key)
+graphify hook install     # optional: refresh graph on git commit
+```
+
+In Cursor:
+
+- `/graphify .` — full rebuild
+- `/graphify . --update` — incremental update
+
+Query helpers: `graphify query "..."`, `graphify path "A" "B"`, `graphify explain "..."`. Open `graphify-out/graph.html` for the interactive view.
