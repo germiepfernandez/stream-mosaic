@@ -59,7 +59,14 @@ export function ViewerCellView({
         onDrop();
       }}
     >
-      <div className="absolute inset-x-0 top-0 z-20 flex items-center gap-1 bg-gradient-to-b from-black/80 to-transparent p-1.5 opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
+      <div
+        className={cn(
+          "absolute inset-x-0 top-0 z-20 flex items-center gap-1 bg-gradient-to-b from-black/85 via-black/50 to-transparent p-1.5 transition",
+          cell.source
+            ? "opacity-100"
+            : "opacity-100 md:opacity-0 md:group-hover:opacity-100",
+        )}
+      >
         <button
           type="button"
           draggable

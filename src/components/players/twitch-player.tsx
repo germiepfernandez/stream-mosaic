@@ -74,7 +74,7 @@ export function TwitchPlayer({ source, muted, className }: TwitchPlayerProps) {
       const options: Record<string, unknown> = {
         width: "100%",
         height: "100%",
-        parent: [host],
+        parent: [host, "localhost", "127.0.0.1"],
         autoplay: true,
         muted: true,
       };
