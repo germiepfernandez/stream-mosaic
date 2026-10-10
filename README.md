@@ -25,13 +25,71 @@ Pastes and the grid work with no API keys.
 
 ## Optional API setup (free)
 
-Copy `.env.example` to `.env.local` and fill in values.
+Copy `.env.example` to `.env.local` (or fill the empty keys). Restart `npm run dev` after changes. Neither Twitch nor YouTube charges for this.
 
-1. **AUTH_SECRET** — `openssl rand -base64 32`
-2. **Twitch** — create an app at [Twitch Developer Console](https://dev.twitch.tv/console/apps). Set the redirect URL to `http://127.0.0.1:43123/api/auth/callback/twitch`. Enables live status and “Connect Twitch” (import follows).
-3. **Google / YouTube** — create an OAuth client in Google Cloud with the YouTube Data API enabled. Redirect: `http://127.0.0.1:43123/api/auth/callback/google`. Add a YouTube Data API key as `YOUTUBE_API_KEY` for “Refresh YT live”. Put the OAuth app in testing mode and add yourself as a test user.
+### 1. AUTH_SECRET
 
-Neither Twitch nor YouTube charges for this. YouTube has a free daily quota; live searches are limited (~100/day), so refresh is manual.
+Already needed for Connect buttons:
+
+```bash
+openssl rand -base64 32
+```
+
+Put the result in `AUTH_SECRET`. Also set:
+
+```
+AUTH_URL=http://127.0.0.1:43123
+```
+
+### 2. Twitch (live badges + import follows)
+
+1. Open [Twitch Developer Console](https://dev.twitch.tv/console/apps) and log in.
+2. **Register Your Application**.
+3. Name: `Stream Mosaic` (or anything).
+4. OAuth Redirect URLs (exact):
+
+   `http://127.0.0.1:43123/api/auth/callback/twitch`
+
+5. Category: **Website Integration**.
+6. Create, then open the app → **New Secret** → copy **Client ID** and **Client Secret** into:
+
+```
+TWITCH_CLIENT_ID=...
+TWITCH_CLIENT_SECRET=...
+```
+
+### 3. Google / YouTube (import subscriptions + live refresh)
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) → create or pick a project.
+2. **APIs & Services → Library** → enable **YouTube Data API v3**.
+3. **APIs & Services → OAuth consent screen**:
+   - User type: **External**
+   - App name: Stream Mosaic
+   - Add your Google account under **Test users**
+   - Scopes: add `.../auth/youtube.readonly` (or leave and grant at login)
+   - Publishing status: stay in **Testing** (no verification needed for personal use)
+4. **APIs & Services → Credentials → Create credentials → OAuth client ID**:
+   - Application type: **Web application**
+   - Authorized redirect URIs:
+
+     `http://127.0.0.1:43123/api/auth/callback/google`
+
+   - Copy Client ID and Client Secret into:
+
+```
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+```
+
+5. **Credentials → Create credentials → API key** (for “Refresh YT live” only):
+   - Restrict the key to **YouTube Data API v3** if you want
+   - Put it in:
+
+```
+YOUTUBE_API_KEY=...
+```
+
+YouTube has a free daily quota; live searches are limited (~100/day), so refresh is manual.
 
 ## Scripts
 
