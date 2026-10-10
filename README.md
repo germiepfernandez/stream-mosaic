@@ -91,6 +91,39 @@ YOUTUBE_API_KEY=...
 
 YouTube has a free daily quota; live searches are limited (~100/day), so refresh is manual.
 
+## Deploy to Vercel
+
+This is a standard Next.js app — Vercel works well.
+
+1. Push the repo to GitHub (or deploy from the Vercel CLI).
+2. In [vercel.com/new](https://vercel.com/new), **Import** the repo.
+3. Add Environment Variables (Production + Preview):
+
+| Variable | Required? |
+| --- | --- |
+| `AUTH_SECRET` | Yes if using Connect Twitch/YouTube |
+| `AUTH_URL` | Yes when using OAuth — your `https://….vercel.app` URL |
+| `TWITCH_CLIENT_ID` / `TWITCH_CLIENT_SECRET` | Optional |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional |
+| `YOUTUBE_API_KEY` | Optional (YT live refresh) |
+
+4. After the first deploy, copy the Vercel URL and add OAuth redirects in Twitch + Google:
+
+   - `https://YOUR_DOMAIN/api/auth/callback/twitch`
+   - `https://YOUR_DOMAIN/api/auth/callback/google`
+
+5. Set `AUTH_URL` to that same `https://YOUR_DOMAIN` and redeploy.
+
+Watching pasted links works with **no** API keys. Connect / live badges need the keys above.
+
+CLI alternative (from the project root):
+
+```bash
+npx vercel
+npx vercel --prod
+npx vercel env add AUTH_SECRET
+```
+
 ## Scripts
 
 - `npm run dev` — development server
