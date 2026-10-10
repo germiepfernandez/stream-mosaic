@@ -97,3 +97,14 @@ YouTube has a free daily quota; live searches are limited (~100/day), so refresh
 - `npm run build` — production build
 - `npm run start` — run production build
 - `npm run lint` — ESLint
+- `npm run openspec:update` — refresh OpenSpec Cursor skills/commands
+
+## OpenSpec
+
+This repo uses [OpenSpec](https://openspec.dev/) for change proposals and specs (`openspec/`). In Cursor chat:
+
+- `/opsx-propose` — plan a change
+- `/opsx-apply` — implement the change
+- `/opsx-archive` — archive when done
+
+Restart Cursor after pulling so the new commands load.

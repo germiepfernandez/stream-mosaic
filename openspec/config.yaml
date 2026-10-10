@@ -1,0 +1,16 @@
+schema: spec-driven
+
+context: |
+  Stream Mosaic is a Next.js multi-stream viewer (YouTube + Twitch embeds).
+  Prefer localStorage over a database unless the change explicitly needs a server store.
+  Twitch Helix and YouTube Data API are free (quota/rate limits only); never commit secrets.
+  Watching pasted links must keep working with no API keys configured.
+  Do not add chat docks, cross-player timestamp sync, or email/password accounts unless requested.
+
+rules:
+  proposal:
+    - State whether the change needs Twitch/YouTube API keys or works keyless
+    - Call out localStorage vs server persistence explicitly
+  tasks:
+    - Keep tasks small enough to verify in the running app on port 43123
+
