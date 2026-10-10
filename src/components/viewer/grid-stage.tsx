@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { getLayout, sizesToGridTemplate } from "@/lib/layouts";
+import { getLayout, sizesToGridTemplate, trackEdges } from "@/lib/layouts";
 import type { LayoutId, ParsedMedia, TrackSizes, ViewerCell } from "@/lib/types";
 import { ViewerCellView } from "@/components/viewer/viewer-cell";
 import { cn } from "@/lib/utils";
@@ -41,6 +41,10 @@ export function GridStage({
     axis: "col" | "row";
     index: number;
   } | null>(null);
+  const [hoveredGutter, setHoveredGutter] = useState<{
+    axis: "col" | "row";
+    index: number;
+  } | null>(null);
 
   const startGutterDrag = useCallback(
     (axis: "col" | "row", index: number, event: React.PointerEvent) => {
@@ -71,6 +75,11 @@ export function GridStage({
     },
     [onResizeCols, onResizeRows],
   );
+
+  const colEdges = trackEdges(sizes.cols);
+  const rowEdges = trackEdges(sizes.rows);
+  const colGutters = layout.colGutters ?? [];
+  const rowGutters = layout.rowGutters ?? [];
 
   return (
     <div
@@ -111,59 +120,98 @@ export function GridStage({
         ))}
       </div>
 
-      {/* Column gutters */}
-      {sizes.cols.length > 1 &&
-        sizes.cols.slice(0, -1).map((_, i) => {
-          const total = sizes.cols.reduce((a, b) => a + b, 0);
-          let left = 0;
-          for (let j = 0; j <= i; j++) left += sizes.cols[j];
-          const pct = (left / total) * 100;
-          return (
-            <div
-              key={`col-${i}`}
-              role="separator"
-              aria-orientation="vertical"
-              className={cn(
-                "absolute top-0 z-30 hidden h-full w-2 -translate-x-1/2 cursor-col-resize md:block",
-                activeGutter?.axis === "col" &&
-                  activeGutter.index === i &&
-                  "bg-teal-400/30",
-              )}
-              style={{ left: `${pct}%` }}
-              onPointerDown={(e) => startGutterDrag("col", i, e)}
-            >
-              <div className="mx-auto h-full w-px bg-white/20" />
-            </div>
-          );
-        })}
+      {colGutters.map((gutter) => {
+        const leftPct = colEdges[gutter.after + 1] * 100;
+        const topFrac = gutter.fromTrack != null ? rowEdges[gutter.fromTrack] : 0;
+        const bottomFrac =
+          gutter.toTrack != null ? rowEdges[gutter.toTrack] : 1;
+        const isActive =
+          activeGutter?.axis === "col" && activeGutter.index === gutter.after;
+        const isHovered =
+          hoveredGutter?.axis === "col" && hoveredGutter.index === gutter.after;
+        const showLine = isActive || isHovered;
 
-      {/* Row gutters */}
-      {sizes.rows.length > 1 &&
-        sizes.rows.slice(0, -1).map((_, i) => {
-          const total = sizes.rows.reduce((a, b) => a + b, 0);
-          let top = 0;
-          for (let j = 0; j <= i; j++) top += sizes.rows[j];
-          const pct = (top / total) * 100;
-          return (
+        return (
+          <div
+            key={`col-${gutter.after}`}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize columns"
+            className={cn(
+              "absolute z-30 hidden w-3 -translate-x-1/2 cursor-col-resize md:block",
+              isActive && "bg-teal-400/20",
+            )}
+            style={{
+              left: `${leftPct}%`,
+              top: `${topFrac * 100}%`,
+              height: `${(bottomFrac - topFrac) * 100}%`,
+            }}
+            onPointerDown={(e) => startGutterDrag("col", gutter.after, e)}
+            onPointerEnter={() =>
+              setHoveredGutter({ axis: "col", index: gutter.after })
+            }
+            onPointerLeave={() =>
+              setHoveredGutter((h) =>
+                h?.axis === "col" && h.index === gutter.after ? null : h,
+              )
+            }
+          >
             <div
-              key={`row-${i}`}
-              role="separator"
-              aria-orientation="horizontal"
               className={cn(
-                "absolute left-0 z-30 hidden h-2 w-full -translate-y-1/2 cursor-row-resize md:block",
-                activeGutter?.axis === "row" &&
-                  activeGutter.index === i &&
-                  "bg-teal-400/30",
+                "mx-auto h-full w-px transition-colors",
+                showLine ? "bg-teal-400/80" : "bg-transparent",
               )}
-              style={{ top: `${pct}%` }}
-              onPointerDown={(e) => startGutterDrag("row", i, e)}
-            >
-              <div className="my-auto h-px w-full bg-white/20" />
-            </div>
-          );
-        })}
+            />
+          </div>
+        );
+      })}
 
-      {/* Mobile stacked */}
+      {rowGutters.map((gutter) => {
+        const topPct = rowEdges[gutter.after + 1] * 100;
+        const leftFrac = gutter.fromTrack != null ? colEdges[gutter.fromTrack] : 0;
+        const rightFrac =
+          gutter.toTrack != null ? colEdges[gutter.toTrack] : 1;
+        const isActive =
+          activeGutter?.axis === "row" && activeGutter.index === gutter.after;
+        const isHovered =
+          hoveredGutter?.axis === "row" && hoveredGutter.index === gutter.after;
+        const showLine = isActive || isHovered;
+
+        return (
+          <div
+            key={`row-${gutter.after}`}
+            role="separator"
+            aria-orientation="horizontal"
+            aria-label="Resize rows"
+            className={cn(
+              "absolute z-30 hidden h-3 -translate-y-1/2 cursor-row-resize md:block",
+              isActive && "bg-teal-400/20",
+            )}
+            style={{
+              top: `${topPct}%`,
+              left: `${leftFrac * 100}%`,
+              width: `${(rightFrac - leftFrac) * 100}%`,
+            }}
+            onPointerDown={(e) => startGutterDrag("row", gutter.after, e)}
+            onPointerEnter={() =>
+              setHoveredGutter({ axis: "row", index: gutter.after })
+            }
+            onPointerLeave={() =>
+              setHoveredGutter((h) =>
+                h?.axis === "row" && h.index === gutter.after ? null : h,
+              )
+            }
+          >
+            <div
+              className={cn(
+                "my-auto h-px w-full transition-colors",
+                showLine ? "bg-teal-400/80" : "bg-transparent",
+              )}
+            />
+          </div>
+        );
+      })}
+
       <div className="flex h-full flex-col gap-1 overflow-y-auto p-1 md:hidden">
         {cells.map((cell) => (
           <div key={cell.id} className="min-h-[40vh] shrink-0">

@@ -1,5 +1,16 @@
 import type { LayoutId, TrackSizes } from "@/lib/types";
 
+export interface GutterSpan {
+  /** 0-based track index before the gutter (between track i and i+1) */
+  after: number;
+  /**
+   * For row gutters: which columns the handle covers (inclusive start, exclusive end).
+   * For col gutters: which rows the handle covers. Omit for full stage.
+   */
+  fromTrack?: number;
+  toTrack?: number;
+}
+
 export interface LayoutTemplate {
   id: LayoutId;
   label: string;
@@ -10,6 +21,9 @@ export interface LayoutTemplate {
   defaultSizes: TrackSizes;
   /** CSS grid-area style placement per slot index */
   areas: string[];
+  /** Where row resize handles may appear; omit a row to skip a full-bleed line */
+  rowGutters?: GutterSpan[];
+  colGutters?: GutterSpan[];
 }
 
 export const LAYOUTS: LayoutTemplate[] = [
@@ -22,6 +36,8 @@ export const LAYOUTS: LayoutTemplate[] = [
     rows: 1,
     defaultSizes: { cols: [1], rows: [1] },
     areas: ["1 / 1 / 2 / 2"],
+    colGutters: [],
+    rowGutters: [],
   },
   {
     id: "2",
@@ -32,6 +48,8 @@ export const LAYOUTS: LayoutTemplate[] = [
     rows: 1,
     defaultSizes: { cols: [1, 1], rows: [1] },
     areas: ["1 / 1 / 2 / 2", "1 / 2 / 2 / 3"],
+    colGutters: [{ after: 0 }],
+    rowGutters: [],
   },
   {
     id: "2-stack",
@@ -42,6 +60,8 @@ export const LAYOUTS: LayoutTemplate[] = [
     rows: 2,
     defaultSizes: { cols: [1], rows: [1, 1] },
     areas: ["1 / 1 / 2 / 2", "2 / 1 / 3 / 2"],
+    colGutters: [],
+    rowGutters: [{ after: 0 }],
   },
   {
     id: "3-focus",
@@ -52,6 +72,9 @@ export const LAYOUTS: LayoutTemplate[] = [
     rows: 2,
     defaultSizes: { cols: [2, 1], rows: [1, 1] },
     areas: ["1 / 1 / 3 / 2", "1 / 2 / 2 / 3", "2 / 2 / 3 / 3"],
+    // Vertical split is full height; horizontal split only on the side stack
+    colGutters: [{ after: 0 }],
+    rowGutters: [{ after: 0, fromTrack: 1, toTrack: 2 }],
   },
   {
     id: "3",
@@ -62,6 +85,8 @@ export const LAYOUTS: LayoutTemplate[] = [
     rows: 1,
     defaultSizes: { cols: [1, 1, 1], rows: [1] },
     areas: ["1 / 1 / 2 / 2", "1 / 2 / 2 / 3", "1 / 3 / 2 / 4"],
+    colGutters: [{ after: 0 }, { after: 1 }],
+    rowGutters: [],
   },
   {
     id: "4",
@@ -77,6 +102,8 @@ export const LAYOUTS: LayoutTemplate[] = [
       "2 / 1 / 3 / 2",
       "2 / 2 / 3 / 3",
     ],
+    colGutters: [{ after: 0 }],
+    rowGutters: [{ after: 0 }],
   },
   {
     id: "6",
@@ -94,8 +121,22 @@ export const LAYOUTS: LayoutTemplate[] = [
       "2 / 2 / 3 / 3",
       "2 / 3 / 3 / 4",
     ],
+    colGutters: [{ after: 0 }, { after: 1 }],
+    rowGutters: [{ after: 0 }],
   },
 ];
+
+/** Convert track weights into cumulative edge positions (0–1), length = tracks + 1 */
+export function trackEdges(weights: number[]): number[] {
+  const total = weights.reduce((a, b) => a + b, 0) || 1;
+  const edges = [0];
+  let acc = 0;
+  for (const w of weights) {
+    acc += w / total;
+    edges.push(acc);
+  }
+  return edges;
+}
 
 export const LAYOUT_BY_ID = Object.fromEntries(
   LAYOUTS.map((l) => [l.id, l]),
