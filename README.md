@@ -1,4 +1,4 @@
-# MultiPOV
+# Stream Mosaic
 
 Watch multiple YouTube and Twitch streams or VODs in one grid. Built for following several player POVs of the same game.
 

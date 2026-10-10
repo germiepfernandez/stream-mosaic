@@ -1,8 +1,8 @@
 import type { LayoutId, RosterEntry, ViewerState } from "@/lib/types";
 import { getLayout } from "@/lib/layouts";
 
-const VIEWER_KEY = "multipov:viewer-v1";
-const ROSTER_KEY = "multipov:roster-v1";
+const VIEWER_KEY = "stream-mosaic:viewer-v1";
+const ROSTER_KEY = "stream-mosaic:roster-v1";
 
 export function createEmptyCells(count: number, idOffset = 0) {
   return Array.from({ length: count }, (_, index) => ({

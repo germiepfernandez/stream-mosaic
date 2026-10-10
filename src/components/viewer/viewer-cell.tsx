@@ -50,7 +50,7 @@ export function ViewerCellView({
   return (
     <div
       className={cn(
-        "group relative flex min-h-0 min-w-0 flex-col overflow-hidden rounded-sm border border-white/10 bg-zinc-950",
+        "group flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-sm border border-white/10 bg-zinc-950",
         listening && "ring-2 ring-teal-400/80",
       )}
       onDragOver={(e) => e.preventDefault()}
@@ -59,9 +59,60 @@ export function ViewerCellView({
         onDrop();
       }}
     >
+      <div className="flex shrink-0 items-center gap-1 border-b border-white/10 bg-zinc-900 px-1.5 py-1">
+        <button
+          type="button"
+          draggable
+          onDragStart={onDragStart}
+          className="cursor-grab rounded p-1 text-zinc-400 hover:bg-white/10 hover:text-white active:cursor-grabbing"
+          aria-label="Drag to reorder"
+        >
+          <GripVertical className="size-3.5" />
+        </button>
+        <input
+          value={cell.label}
+          onChange={(e) => onLabelChange(e.target.value)}
+          placeholder={cell.source ? "Label" : "Empty slot"}
+          className="min-w-0 flex-1 bg-transparent text-xs font-medium text-zinc-100 outline-none placeholder:text-zinc-500"
+        />
+        {cell.source && (
+          <>
+            <Button
+              type="button"
+              size="sm"
+              variant={listening ? "default" : "secondary"}
+              className={cn(
+                "h-7 gap-1 px-2 text-xs",
+                listening
+                  ? "bg-teal-500 text-zinc-950 hover:bg-teal-400"
+                  : "bg-zinc-700 text-zinc-100 hover:bg-zinc-600",
+              )}
+              onClick={onListen}
+            >
+              {listening ? (
+                <Volume2 className="size-3.5" />
+              ) : (
+                <VolumeX className="size-3.5" />
+              )}
+              Listen
+            </Button>
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="ghost"
+              className="text-zinc-300 hover:bg-white/10 hover:text-white"
+              onClick={onClear}
+              aria-label="Remove"
+            >
+              <X className="size-3.5" />
+            </Button>
+          </>
+        )}
+      </div>
+
       <div
         className={cn(
-          "relative z-0 min-h-0 flex-1",
+          "relative min-h-0 flex-1",
           blockPointer && "pointer-events-none",
         )}
       >
@@ -105,55 +156,6 @@ export function ViewerCellView({
             muted={!listening}
             className="absolute inset-0"
           />
-        )}
-      </div>
-
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-center gap-1 bg-gradient-to-b from-black/90 via-black/55 to-transparent p-1.5">
-        <button
-          type="button"
-          draggable
-          onDragStart={onDragStart}
-          className="pointer-events-auto cursor-grab rounded p-1 text-white/70 hover:bg-white/10 hover:text-white active:cursor-grabbing"
-          aria-label="Drag to reorder"
-        >
-          <GripVertical className="size-3.5" />
-        </button>
-        <input
-          value={cell.label}
-          onChange={(e) => onLabelChange(e.target.value)}
-          placeholder="Label"
-          className="pointer-events-auto min-w-0 flex-1 bg-transparent text-xs font-medium text-white outline-none placeholder:text-white/40"
-        />
-        {cell.source && (
-          <>
-            <Button
-              type="button"
-              size="sm"
-              variant={listening ? "default" : "secondary"}
-              className={cn(
-                "pointer-events-auto h-7 gap-1 px-2 text-xs",
-                listening && "bg-teal-500 text-zinc-950 hover:bg-teal-400",
-              )}
-              onClick={onListen}
-            >
-              {listening ? (
-                <Volume2 className="size-3.5" />
-              ) : (
-                <VolumeX className="size-3.5" />
-              )}
-              Listen
-            </Button>
-            <Button
-              type="button"
-              size="icon-sm"
-              variant="ghost"
-              className="pointer-events-auto text-white/80 hover:bg-white/10 hover:text-white"
-              onClick={onClear}
-              aria-label="Remove"
-            >
-              <X className="size-3.5" />
-            </Button>
-          </>
         )}
       </div>
     </div>

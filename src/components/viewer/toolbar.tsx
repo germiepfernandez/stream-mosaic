@@ -59,7 +59,9 @@ export function Toolbar({
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1.5 pr-2">
           <LayoutGrid className="size-4 text-teal-400" />
-          <span className="text-sm font-semibold tracking-wide">MultiPOV</span>
+          <span className="text-sm font-semibold tracking-wide">
+            Stream Mosaic
+          </span>
         </div>
 
         <div className="flex flex-wrap items-center gap-1">

@@ -14,7 +14,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MultiPOV — Watch multiple streams",
+  title: "Stream Mosaic — Watch multiple streams",
   description:
     "Watch multiple YouTube and Twitch POVs in a customizable grid. Built for following games from every angle.",
 };
