@@ -109,6 +109,12 @@ This repo uses [OpenSpec](https://openspec.dev/) for change proposals and specs 
 
 Restart Cursor after pulling so the new commands load.
 
+## i-have-adhd
+
+ADHD-friendly reply style skill ([ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)).
+
+In Cursor chat, type `/i-have-adhd` to turn it on for the session. Say `stop adhd mode` to turn it off.
+
 ## Graphify
 
 This repo uses [graphify](https://github.com/safishamsi/graphify) for a local codebase knowledge graph (`graphify-out/`). Cursor rule: [`.cursor/rules/graphify.mdc`](.cursor/rules/graphify.mdc).
