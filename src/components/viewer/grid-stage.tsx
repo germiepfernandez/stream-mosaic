@@ -138,7 +138,7 @@ export function GridStage({
             aria-orientation="vertical"
             aria-label="Resize columns"
             className={cn(
-              "absolute z-30 hidden w-3 -translate-x-1/2 cursor-col-resize md:block",
+              "absolute z-30 hidden w-3 -translate-x-1/2 cursor-col-resize md:flex md:items-center md:justify-center",
               isActive && "bg-teal-400/20",
             )}
             style={{
@@ -158,7 +158,7 @@ export function GridStage({
           >
             <div
               className={cn(
-                "mx-auto h-full w-px transition-colors",
+                "h-full w-px transition-colors",
                 showLine ? "bg-teal-400/80" : "bg-transparent",
               )}
             />
@@ -184,7 +184,7 @@ export function GridStage({
             aria-orientation="horizontal"
             aria-label="Resize rows"
             className={cn(
-              "absolute z-30 hidden h-3 -translate-y-1/2 cursor-row-resize md:block",
+              "absolute z-30 hidden h-3 -translate-y-1/2 cursor-row-resize md:flex md:items-center md:justify-center",
               isActive && "bg-teal-400/20",
             )}
             style={{
@@ -204,7 +204,7 @@ export function GridStage({
           >
             <div
               className={cn(
-                "my-auto h-px w-full transition-colors",
+                "h-px w-full transition-colors",
                 showLine ? "bg-teal-400/80" : "bg-transparent",
               )}
             />
